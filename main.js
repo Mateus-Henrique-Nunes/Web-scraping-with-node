@@ -1,16 +1,34 @@
+const e = require('express');
 const express = require('express');
 const app = express();
 const pup = require('puppeteer');
 const url = 'https://www.flashscore.com.br';
+const sufixlink = '/estatisticas-de-jogo/0'
 
 
+app.get("/favicon.ico", (req, res) => {
+    res.status(204).end();
+})
+
+app.get("/:time", (req, res) => {
+    const time = req.params.time.replace(/([a-z])([A-Z])/g, '$1 $2');
+    main(time).then((data) => {
+        res.status(200).json(data);
+        console.log('Dados enviados com sucesso');
+    }).catch((err) => {
+        console.error('Erro ao buscar dados: ', err);
+        res.status(500).json({ error: 'Erro ao buscar dados' });
+    })
+})
 
 const main = async (time) => {
     let browser;
+    let matchs = {}
+
     try {
 
-         browser = await pup.launch({
-            headless: true, args: [
+        browser = await pup.launch({
+            headless: false, args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
                 '--disable-dev-shm-usage',
@@ -39,7 +57,7 @@ const main = async (time) => {
 
         await page.click("#search-window")
         await page.waitForSelector(".searchInput__input");
-        await page.type(".searchInput__input", "Manchester City");
+        await page.type(".searchInput__input", time);
         await page.waitForSelector('.searchResult')
 
 
@@ -68,43 +86,57 @@ const main = async (time) => {
             return link;
         })
 
-        const sufixlink = '/estatisticas-de-jogo/0'
 
         // const fullLink=linkMatchs[0]+sufixlink;
         // await page.goto(fullLink)
 
 
         const awaitStatistics = async () => {
-            await page.waitForSelector('.wcl-category_ITphf')
-            await page.waitForSelector('.participant__participantName>a')
-            const cornerKicks = await page.evaluate(() => {
-                const teams = Array.from(document.querySelectorAll('.participant__participantName>a'));
-                const wrapper = Array.from(document.querySelectorAll('.wcl-category_ITphf'));
-                const content = wrapper.map((e) => {
-                    const contenItSelf = Array.from(e.querySelectorAll('strong'));
 
-                    return contenItSelf.map(e => e.innerText)
+            try {
+                await page.waitForSelector('.wcl-category_ITphf')
+                await page.waitForSelector('.participant__participantName>a')
+                const cornerKicks = await page.evaluate(() => {
+                    const teams = Array.from(document.querySelectorAll('.participant__participantName>a'));
+                    const wrapper = Array.from(document.querySelectorAll('.wcl-category_ITphf'));
+                    const content = wrapper.map((e) => {
+                        const contenItSelf = Array.from(e.querySelectorAll('strong'));
 
+                        return contenItSelf.map(e => e.innerText)
+                    });
+
+                    // Espaço completamente de teste
+                    const newContent = content.reduce((acc, e) => {
+                        acc[e[1]] = { home: e[0], away: e[2] };
+                        return acc;
+                    }, {})
+
+                    // Fim do espaço de teste
+
+                    return {
+                        Teams: { Teamhome: teams[0].innerText, TeamAway: teams[1].innerText },
+                        Escanteios: newContent["Escanteios"],
+                        ChutesAGol: newContent["Finalizações no alvo"],
+                    };
 
                 });
-                return {
-                    TeamHome: teams[0].innerText, TeamAway: teams[1].innerText,
-                    Statistics: content
-                };
 
-            });
-
-            return cornerKicks
+                return cornerKicks
+            } catch (err) {
+                console.error('Erro ao buscar estatísticas: '+ err);
+                browser.close();
+                return null
+            }
 
         }
 
-        const matchs = {}
-        for (i = 0; i <= 3; i++) {
+
+        for (i = 0; i <= 4; i++) {
             try {
                 const fullLink = linkMatchs[i] + sufixlink;
                 await page.goto(fullLink, { timeout: 2000 })
                 const data = await awaitStatistics();
-                matchs[i] = data
+                matchs[`Fixture ${i}`] = data
             } catch (err) {
                 console.error('Erro identificado: ', err)
             }
@@ -112,16 +144,8 @@ const main = async (time) => {
 
         }
 
-
         await browser.close();
         return matchs
-
-        /*
-            Próximas etapas:
-            1. Organizar saida no cornerKicks, mais especificamente no return {TeamHome....}
-            2. Tirar media dos dados essenciais (escanteios e chutes a gol)
-            3. Criar uma rota para acessar os dados em Json (matchs.json()?)
-        */
 
     }
     catch (err) {
@@ -133,8 +157,18 @@ const main = async (time) => {
 
 }
 
+app.listen(3000, () => {
+    console.log('Servidor rodando na porta 3000');
+});
 
 
-main().then((data) => {
-    console.log(data)
-})
+
+
+
+/*
+ Próximas etapas:
+  1. Organizar saida no cornerKicks, mais especificamente no return {TeamHome....}
+  2. Tirar media dos dados essenciais (escanteios e chutes a gol)
+  3. Criar uma rota para acessar os dados em Json (matchs.json()?)
+
+ */
