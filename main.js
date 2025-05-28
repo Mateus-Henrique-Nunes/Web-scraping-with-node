@@ -1,4 +1,3 @@
-const e = require('express');
 const express = require('express');
 const app = express();
 const pup = require('puppeteer');
@@ -115,8 +114,9 @@ const main = async (time) => {
 
                     return {
                         Teams: { Teamhome: teams[0].innerText, TeamAway: teams[1].innerText },
-                        Escanteios: newContent["Escanteios"],
-                        ChutesAGol: newContent["Finalizações no alvo"],
+                        Content: newContent,
+                        // Escanteios: newContent["Escanteios"],
+                        // ChutesAGol: newContent["Finalizações no alvo"],
                     };
 
                 });
