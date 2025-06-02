@@ -21,6 +21,7 @@ app.get("/:time", (req, res) => {
 })
 
 const main = async (time) => {
+    let teamSearch;
     let browser;
     let matchs = {}
 
@@ -59,7 +60,11 @@ const main = async (time) => {
         await page.type(".searchInput__input", time);
         await page.waitForSelector('.searchResult')
 
-
+        //Get team correct name
+        teamSearch= await page.evaluate(()=>{
+            return team= document.querySelector('.searchResult__participantName').innerText
+        })
+        
 
         await Promise.all([
             page.waitForNavigation(),
@@ -75,7 +80,7 @@ const main = async (time) => {
         })
 
 
-        await page.goto(`https://www.flashscore.com.br${link}`, { timeout: 2000 });
+        await page.goto(`https://www.flashscore.com.br${link}`, { timeout: 10000 });
 
         const linkMatchs = await page.evaluate(() => {
             const matchs = Array.from(document.querySelectorAll('.event__match>a'));
@@ -86,14 +91,11 @@ const main = async (time) => {
         })
 
 
-        // const fullLink=linkMatchs[0]+sufixlink;
-        // await page.goto(fullLink)
-
 
         const awaitStatistics = async () => {
 
             try {
-                await page.waitForSelector('.wcl-category_ITphf')
+                await page.waitForSelector('.wcl-category_ITphf', {timeout:10000})
                 await page.waitForSelector('.participant__participantName>a')
                 const cornerKicks = await page.evaluate(() => {
                     const teams = Array.from(document.querySelectorAll('.participant__participantName>a'));
@@ -104,19 +106,17 @@ const main = async (time) => {
                         return contenItSelf.map(e => e.innerText)
                     });
 
-                    // Espaço completamente de teste
+                    // Organize content into an object
                     const newContent = content.reduce((acc, e) => {
                         acc[e[1]] = { home: e[0], away: e[2] };
                         return acc;
                     }, {})
 
-                    // Fim do espaço de teste
+                
 
                     return {
                         Teams: { Teamhome: teams[0].innerText, TeamAway: teams[1].innerText },
                         Content: newContent,
-                        // Escanteios: newContent["Escanteios"],
-                        // ChutesAGol: newContent["Finalizações no alvo"],
                     };
 
                 });
@@ -124,8 +124,7 @@ const main = async (time) => {
                 return cornerKicks
             } catch (err) {
                 console.error('Erro ao buscar estatísticas: '+ err);
-                browser.close();
-                return null
+                return {erro: 'partida sem dados'}
             }
 
         }
@@ -134,11 +133,12 @@ const main = async (time) => {
         for (i = 0; i <= 4; i++) {
             try {
                 const fullLink = linkMatchs[i] + sufixlink;
-                await page.goto(fullLink, { timeout: 2000 })
+                await page.goto(fullLink, { timeout: 2000 })                               
                 const data = await awaitStatistics();
-                matchs[`Fixture ${i}`] = data
+                matchs[`Jogo ${i+1}`]={teamSearch:teamSearch, ...data}
             } catch (err) {
                 console.error('Erro identificado: ', err)
+                continue
             }
 
 
@@ -160,15 +160,3 @@ const main = async (time) => {
 app.listen(3000, () => {
     console.log('Servidor rodando na porta 3000');
 });
-
-
-
-
-
-/*
- Próximas etapas:
-  1. Organizar saida no cornerKicks, mais especificamente no return {TeamHome....}
-  2. Tirar media dos dados essenciais (escanteios e chutes a gol)
-  3. Criar uma rota para acessar os dados em Json (matchs.json()?)
-
- */
