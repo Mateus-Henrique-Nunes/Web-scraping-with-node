@@ -1,0 +1,6 @@
+.env
+venv/
+*.pyc
+*.log
+package-lock.json
+node_modules/

@@ -62,7 +62,7 @@ const main = async (time) => {
 
         //Get team correct name
         teamSearch= await page.evaluate(()=>{
-            return team= document.querySelector('.searchResult__participantName').innerText
+            return time= document.querySelector('.searchResult__participantName').innerText
         })
         
 
