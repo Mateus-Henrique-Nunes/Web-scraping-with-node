@@ -11,9 +11,9 @@
 - Node.js 
    Libs: Puppeteer, Express
 
-# Por quê node e python ?
+# Por quê node e python ? 
 
-<div>O projeto é dividido em duas linguagens, sendo elas: python e Node.js. Inicialmente o foco seria somente na utilização do python com a API-Futebool, porém, enquanto fazia alguns testes e utiliza a API, notei que a mesma carecia de informções sobre escanteios e até mesmo chutes a gol de uma partida. Visando solucionar essa questão e coletar essas informações, resolvi criar uma API própria para coletar esses dados atráves de web scraping utilizando node.<br> Bem.... você deve está se perguntando, por quê não utilizar o próprio python para fazer web scraping ? A resposta é bem simples. Eu tentei, mas achei "Difícil" demais, tenho pouca familiaridade com python (para não dizer nula) o que eu sei é no máximo o básico que aprendi na faculdade e de alguns vídeos que assisti por aí. Outro fator que me fez utilizar node é porquê eu já tinha tentado fazer uma coleta de dados em alguns outros sites usando o puppeteer, então uma coisa levou a outra👍.</div>
+<div>O projeto é dividido em duas linguagens, sendo elas: python e Node.js. Inicialmente o foco seria somente na utilização do python com a API-Futebool, porém, enquanto fazia alguns testes e utiliza a API, notei que a mesma carecia de informções sobre escanteios e até mesmo chutes a gol de uma partida. Visando solucionar essa questão e coletar essas informações, resolvi criar uma API própria para coletar esses dados atráves de web scraping utilizando node.<br> Bem.... você deve está se perguntando, por quê não utilizar o próprio python para fazer web scraping já que nele há bibliotecas como Selenium e BeautifulSoup ? A resposta é bem simples. Eu tentei, mas achei muito complicado, tenho pouca familiaridade com python (para não dizer nula) e como já tinha um escopo de puppeter pronto devido estudos anteriores.... uma coisa acabou levando a outra, então pelo caminho que me parecia mais fácil👍.</div>
 
 
 # Estrutura do projeto
