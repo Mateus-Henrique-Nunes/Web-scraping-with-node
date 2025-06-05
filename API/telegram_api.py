@@ -4,6 +4,7 @@ from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 from dotenv import load_dotenv
 import os
+from IaToCorrectname import chat
 
 
 def app():
@@ -48,11 +49,11 @@ def main(team):
 def get_average(content):
     shots=[]
     corners=[]
-    for key, value in content.items():
+    for key, value in content['matchs'].items():
         if value.get('erro'):
            continue
         else:
-            team= value['teamSearch']
+            team= content['teamSearch']
             teamhome= value["Teams"]["Teamhome"]
         
             if team== teamhome:
@@ -78,11 +79,11 @@ def get_average(content):
 def handle_message(text):
     try:
         content= main(text)
-        obj=[]
+        message=[]
         averagecorners, averageshots= get_average(content)
         if content is None:
-            return obj, 0, 0
-        for key, value in content.items():
+            return message, 0, 0
+        for key, value in content['matchs'].items():
             if value.get('erro'):
                 continue
             else:
@@ -92,9 +93,9 @@ def handle_message(text):
                 cornersaway= value["Content"]["Escanteios"]['away']
                 shotshome= value["Content"]["Finalizações no alvo"]["home"]
                 shotsaway= value["Content"]["Finalizações no alvo"]["away"]
-                obj.append(f'{key}\n{teamhome} vs {teamaway}\nJogando em casa: {teamhome}\nJogando como visitante: {teamaway}\n\n***Escanteios***\nEscanteios para o time de casa: {cornershome}\nEscanteios para o time visitante: {cornersaway}\n\n***Chutes a Gol***\nTime de casa: {shotshome}\nTime visitante: {shotsaway}')
+                message.append(f'{key}\n{teamhome} vs {teamaway}\nJogando em casa: {teamhome}\nJogando como visitante: {teamaway}\n\n***Escanteios***\nEscanteios para o time de casa: {cornershome}\nEscanteios para o time visitante: {cornersaway}\n\n***Chutes a Gol***\nTime de casa: {shotshome}\nTime visitante: {shotsaway}')
         
-        return obj, averagecorners, averageshots
+        return message, averagecorners, averageshots, content['nextFixture']
     except Exception as e:
         print(f'Erro detected: {e}')
         return [], 0, 0
@@ -108,14 +109,18 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_name= update.message.from_user.first_name
     text: str = update.message.text
     await update.message.reply_text(f"Aguarde um momento enquanto busco os dados dos os ultimos 5 jogos do {text}.... ")
+   
+    # API that's IA fix the name of the team
 
-    content, averagecorners, averageshots= handle_message(text)
-    if not content:
+    #newtext= chat(text)
+    message, averagecorners, averageshots, nextFixture= handle_message(text)
+    if not message:
         await update.message.reply_text("SEM DADOS SOBRE O TIME")
     else:
-        for item in content:
+        for item in message:
             await update.message.reply_text(item)
-        await update.message.reply_text(f'Media de escanteios: {averagecorners}\nMedia de chutes a gol: {averageshots}')
+
+        await update.message.reply_text(f'Media de escanteios: {averagecorners}\nMedia de chutes a gol: {averageshots}\nProximo jogo: {nextFixture}')
         await update.message.reply_text(f"{user_name}, aqui estão os dados")
 
 

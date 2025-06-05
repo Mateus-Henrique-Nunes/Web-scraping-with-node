@@ -64,7 +64,7 @@ const main = async (time) => {
         teamSearch= await page.evaluate(()=>{
             return time= document.querySelector('.searchResult__participantName').innerText
         })
-        
+         
 
         await Promise.all([
             page.waitForNavigation(),
@@ -73,17 +73,31 @@ const main = async (time) => {
         ])
 
 
-        await page.waitForSelector('#li2')
-        const link = await page.evaluate(() => {
-            const link = document.querySelector('#li2').getAttribute('href');
-            return link;
+        // await page.waitForSelector('#li2')
+        // const link = await page.evaluate(() => {
+        //     const link = document.querySelector('#li2').getAttribute('href');
+        //     return link;
+        // })
+
+
+        // await page.goto(`https://www.flashscore.com.br${link}`, { timeout: 10000 });
+
+
+        // Ambiente de teste
+
+        await page.waitForSelector('.summary-results')
+        const nextFixture= await page.evaluate(() => {
+            const nextFixture = document.querySelector('.summary-fixtures>.sportName>.event__match');
+            const home = nextFixture.querySelector('.event__homeParticipant').innerText;
+            const away = nextFixture.querySelector('.event__awayParticipant').innerText;
+            return {nextMatch: `${home} vs ${away}`};
         })
 
-
-        await page.goto(`https://www.flashscore.com.br${link}`, { timeout: 10000 });
+        // fim do ambiente de teste
 
         const linkMatchs = await page.evaluate(() => {
-            const matchs = Array.from(document.querySelectorAll('.event__match>a'));
+            // before: .event__match>a
+            const matchs = Array.from(document.querySelectorAll('.summary-results>.sportName>.event__match>a'));
             const link = matchs.map((e) => {
                 return e.getAttribute('href');
             })
@@ -129,13 +143,15 @@ const main = async (time) => {
 
         }
 
-
+        matchs['teamSearch']= teamSearch;
+        matchs['nextFixture']= nextFixture.nextMatch;
+        const eachfixture={}
         for (i = 0; i <= 4; i++) {
             try {
                 const fullLink = linkMatchs[i] + sufixlink;
                 await page.goto(fullLink, { timeout: 2000 })                               
                 const data = await awaitStatistics();
-                matchs[`Jogo ${i+1}`]={teamSearch:teamSearch, ...data}
+                eachfixture[`Jogo ${i+1}`]= data//{teamSearch:teamSearch, ...nextFixture, ...data}
             } catch (err) {
                 console.error('Erro identificado: ', err)
                 continue
@@ -143,6 +159,7 @@ const main = async (time) => {
 
 
         }
+        matchs['matchs'] = eachfixture;
 
         await browser.close();
         return matchs
