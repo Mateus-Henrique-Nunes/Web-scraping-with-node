@@ -5,7 +5,7 @@ from telegram.ext import Application, CommandHandler, MessageHandler, filters, C
 from dotenv import load_dotenv
 import os
 from IaToCorrectname import chat
-
+from unidecode import unidecode
 
 def app():
     load_dotenv()
@@ -78,7 +78,7 @@ def get_average(content):
 #Até agora é a principal função para lidar com os dados
 def handle_message(text):
     try:
-        content= main(text)
+        content= main(unidecode(text))
         message=[]
         averagecorners, averageshots= get_average(content)
         if content is None:
