@@ -1,8 +1,8 @@
-# Coletando dados de partidas de fuutebol com API-futebol e Web-scraping
+<h1>Coletando dados de partidas de fuutebol com API-futebol e Web-scraping</h1>
 
-<h1>Olá, seja bem vindo ao projeto de busca de dados sobre partidas de futebol utilizando web-scpraping e API-futebool</h1>
 
-<div>Esse projeto foi criado puramente por hobby e fins de aprendizado. Desde já, peço compreensão pelo pouco conhecimento ou da falta de boas práticas ao longo do código 😁!</div>
+
+<div>Olá, seja bem vindo ao projeto de busca de dados sobre partidas de futebol utilizando web-scpraping e API-futebool. Esse projeto foi criado puramente por hobby e fins de aprendizado. Desde já, peço compreensão pelo pouco conhecimento ou da falta de boas práticas ao longo do código 😁!</div>
 
 # Principais tecnologias utilizadas no projeto e suas libs:
 - Python
