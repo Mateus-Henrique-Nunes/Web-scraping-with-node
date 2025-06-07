@@ -1,4 +1,4 @@
-# API-futebool 
+# Coletando dados de partidas de fuutebol com API-futebol e Web-scraping
 
 <h1>Olá, seja bem vindo ao projeto de busca de dados sobre partidas de futebol utilizando web-scpraping e API-futebool</h1>
 

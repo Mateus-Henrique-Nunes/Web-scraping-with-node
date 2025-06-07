@@ -126,6 +126,7 @@ const main = async (time) => {
                 await page.waitForSelector('.participant__participantName>a')
                 const cornerKicks = await page.evaluate(() => {
                     const teams = Array.from(document.querySelectorAll('.participant__participantName>a'));
+                    const score = Array.from(document.querySelectorAll('.detailScore__wrapper>span'));
                     const wrapper = Array.from(document.querySelectorAll('.wcl-category_ITphf'));
                     const content = wrapper.map((e) => {
                         const contenItSelf = Array.from(e.querySelectorAll('strong'));
@@ -142,7 +143,7 @@ const main = async (time) => {
 
 
                     return {
-                        Teams: { Teamhome: teams[0].innerText, TeamAway: teams[1].innerText },
+                        Teams: { Teamhome: `${teams[0].innerText}: ${score[0].innerText}` , TeamAway: `${teams[1].innerText}: ${score[2].innerText}` },
                         Content: newContent,
                     };
 
