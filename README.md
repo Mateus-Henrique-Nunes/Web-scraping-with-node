@@ -2,7 +2,7 @@
 
 <h1>Olá, seja bem vindo ao projeto de busca de dados sobre partidas de futebol de forma dinâmica utilizando web-scpraping e API-futebool</h1>
 
-<div>Esse projeto é totalmente amador em sem  qualquer visão de lucro, o objetivo é apenas para estudos e adquirir experiência. Desde já peço compreensão pelo pouco conhecimento ou da falta de boas práticas ao longo do código 😐!</div>
+<div>Esse projeto foi criado puramente por hobby e fins de aprendizado. Desde já, peço compreensão pelo pouco conhecimento ou da falta de boas práticas ao longo do código 😁!</div>
 
 # Principais tecnologias utilizadas no projeto e suas libs:
 - Python
