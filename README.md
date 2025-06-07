@@ -1,4 +1,4 @@
-<h1>Coletando dados de partidas de fuutebol com API-futebol e Web-scraping</h1>
+<h1>Coletando dados de partidas de futebol com API-futebol e Web-scraping</h1>
 
 
 
