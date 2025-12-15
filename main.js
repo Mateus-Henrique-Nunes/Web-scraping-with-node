@@ -108,6 +108,8 @@ const main = async (time) => {
 
         // fim do ambiente de teste
 
+
+        // returning the links of the matches
         const linkMatchs = await page.evaluate(() => {
             // before: .event__match>a
             const matchs = Array.from(document.querySelectorAll('.summary-results>.sportName>.event__match>a'));
@@ -139,7 +141,6 @@ const main = async (time) => {
                         acc[e[1]] = { home: e[0], away: e[2] };
                         return acc;
                     }, {})
-
 
 
                     return {
